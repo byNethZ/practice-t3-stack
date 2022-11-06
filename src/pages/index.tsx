@@ -6,7 +6,10 @@ import Header from "../components/Header";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
+  //const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
+  const product = trpc.product.getAll.useQuery().data;
+
+  console.log(product);
 
   return (
     <>
