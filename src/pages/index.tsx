@@ -7,9 +7,11 @@ import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   //const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-  const product = trpc.product.getAll.useQuery().data;
+  const {data: product, isLoading} = trpc.product.getAll.useQuery();
 
   console.log(product);
+
+  if(isLoading) return <div><h2>Searching products</h2></div>
 
   return (
     <>
@@ -22,7 +24,26 @@ const Home: NextPage = () => {
       <Header></Header>
 
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
-        
+        {(product && product?.length > 0) ?? (
+          <div>
+            {product!.map((pro) => (
+              <Card 
+                key={pro.id}
+                id={pro.id}
+                name={pro.name}
+                slug={pro.slug}
+                description={pro.description}
+                inventary={pro.inventary}
+                price={pro.price}
+              ></Card>
+            ))}
+          </div>
+        )}
+        {!product && (
+          <div>
+            <h2>There is no products</h2>
+          </div>
+        )}
       </main>
     </>
   );
@@ -31,14 +52,16 @@ const Home: NextPage = () => {
 export default Home;
 
 type CardProps = {
+  id: string;
   name: string;
   slug: string;
   description: string;
   inventary: number;
-  price: number;
+  price: any;
 };
 
 const Card: React.FC<CardProps> = ({
+  id,
   name,
   slug,
   description,
